@@ -7,7 +7,7 @@
           v-if="logoSrc"
           :src="logoSrc"
           alt="Logo"
-          class="h-16 w-auto object-contain"
+          class="h-32 w-auto object-contain"
           @error="logoSrc = ''"
         />
         <p class="mt-3 text-center text-lg font-semibold text-slate-800">RBLMHS Digi Archive</p>
