@@ -3,8 +3,16 @@
     <!-- Top bar -->
     <header v-if="user" class="bg-slate-800 text-white shadow">
       <div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <router-link to="/" class="text-lg font-semibold tracking-tight">
-          RBLMHS Digi Archive
+        <router-link
+          to="/"
+          class="flex items-center gap-2 text-lg font-semibold tracking-tight"
+        >
+          <img
+            src="/rbllogo.jpg"
+            alt="RBLMHS Digi Archive logo"
+            class="h-12   w-auto object-contain"
+          />
+          <span>RBLMHS Digi Archive</span>
         </router-link>
         <div class="flex items-center gap-4">
           <!-- Notifications: wrapper has click-outside so bell click is not treated as outside -->
