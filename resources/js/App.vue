@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-800">
     <!-- Top bar -->
-    <header v-if="user" class="bg-slate-800 text-white shadow">
-      <div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
+    <header v-if="user" class="bg-slate-800 text-white shadow-sm border-b border-slate-700/60">
+      <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <router-link
           to="/"
           class="flex items-center gap-2 text-lg font-semibold tracking-tight"
@@ -10,17 +10,17 @@
           <img
             src="/rbllogo.jpg"
             alt="RBLMHS Digi Archive logo"
-            class="h-12   w-auto object-contain"
+            class="h-10 w-auto object-contain"
           />
-          <span>RBLMHS Digi Archive</span>
+          <span class="hidden sm:inline">RBLMHS Digi Archive</span>
         </router-link>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
           <!-- Notifications: wrapper has click-outside so bell click is not treated as outside -->
           <div class="relative" v-click-outside="closeNotifications">
             <button
               type="button"
               @click.stop="toggleNotifications"
-              class="relative z-10 rounded p-2 text-slate-300 hover:bg-slate-700 hover:text-white"
+              class="relative z-10 rounded-full p-2 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
               aria-label="Notifications"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,14 +67,23 @@
               </div>
             </div>
           </div>
-          <span class="text-sm text-slate-300">{{ user?.username }} ({{ user?.role }})</span>
-          <button
-            type="button"
-            @click="logout"
-            class="rounded bg-slate-600 px-3 py-1.5 text-sm hover:bg-slate-500"
-          >
-            Logout
-          </button>
+          <div class="flex items-center gap-2 rounded-full bg-slate-700/70 px-3 py-1.5 text-xs sm:text-sm">
+            <div class="flex flex-col leading-tight">
+              <span class="font-semibold text-slate-50 truncate max-w-[120px] sm:max-w-none">
+                {{ user?.username }}
+              </span>
+              <span class="text-slate-300 capitalize">
+                {{ user?.role }}
+              </span>
+            </div>
+            <button
+              type="button"
+              @click="logout"
+              class="ml-1 inline-flex items-center rounded-full bg-slate-900/70 px-2 py-1 text-[11px] sm:text-xs font-medium text-slate-50 hover:bg-slate-900 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -92,31 +101,36 @@
           </p>
           <router-link
             to="/admin"
-            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            class="block px-4 py-2 text-sm rounded-r-full border-l-2 border-transparent text-slate-700 hover:bg-slate-100"
+            :class="route.path === '/admin' ? 'bg-slate-100 border-slate-800 font-semibold text-slate-900' : ''"
           >
             Dashboard
           </router-link>
           <router-link
             to="/admin/users"
-            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            class="block px-4 py-2 text-sm rounded-r-full border-l-2 border-transparent text-slate-700 hover:bg-slate-100"
+            :class="route.path.startsWith('/admin/users') ? 'bg-slate-100 border-slate-800 font-semibold text-slate-900' : ''"
           >
             Users
           </router-link>
           <router-link
             to="/admin/research"
-            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            class="block px-4 py-2 text-sm rounded-r-full border-l-2 border-transparent text-slate-700 hover:bg-slate-100"
+            :class="route.path.startsWith('/admin/research') ? 'bg-slate-100 border-slate-800 font-semibold text-slate-900' : ''"
           >
             Research
           </router-link>
           <router-link
             to="/admin/download-requests"
-            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            class="block px-4 py-2 text-sm rounded-r-full border-l-2 border-transparent text-slate-700 hover:bg-slate-100"
+            :class="route.path.startsWith('/admin/download-requests') ? 'bg-slate-100 border-slate-800 font-semibold text-slate-900' : ''"
           >
             Download Requests
           </router-link>
           <router-link
             to="/admin/download-logs"
-            class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            class="block px-4 py-2 text-sm rounded-r-full border-l-2 border-transparent text-slate-700 hover:bg-slate-100"
+            :class="route.path.startsWith('/admin/download-logs') ? 'bg-slate-100 border-slate-800 font-semibold text-slate-900' : ''"
           >
             Download Logs
           </router-link>
@@ -142,25 +156,28 @@
       </div>
       <nav
         v-if="user"
-        class="mb-4 flex flex-wrap gap-2 rounded-lg bg-white p-3 text-sm shadow-sm border border-slate-200"
+        class="mb-4 flex flex-wrap gap-2 rounded-lg bg-white p-2.5 sm:p-3 text-sm shadow-sm border border-slate-200"
       >
         <router-link
           to="/research"
-          class="rounded px-3 py-1.5 hover:bg-slate-100"
+          class="rounded-full px-3 py-1.5 hover:bg-slate-100"
+          :class="route.path.startsWith('/research') ? 'bg-slate-900 text-white font-medium' : 'text-slate-700'"
         >
           Research
         </router-link>
         <router-link
           v-if="user?.role === 'faculty'"
           to="/my-submissions"
-          class="rounded px-3 py-1.5 hover:bg-slate-100"
+          class="rounded-full px-3 py-1.5 hover:bg-slate-100"
+          :class="route.path.startsWith('/my-submissions') ? 'bg-slate-900 text-white font-medium' : 'text-slate-700'"
         >
           My Submissions
         </router-link>
         <router-link
           v-if="user?.role === 'faculty'"
           to="/upload"
-          class="rounded px-3 py-1.5 hover:bg-slate-100"
+          class="rounded-full px-3 py-1.5 hover:bg-slate-100"
+          :class="route.path.startsWith('/upload') ? 'bg-slate-900 text-white font-medium' : 'text-slate-700'"
         >
           Upload
         </router-link>
@@ -172,12 +189,13 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import { user, setUser, clearUser } from './auth';
 import { useNotifications } from './composables/useNotifications';
 
 const router = useRouter();
+const route = useRoute();
 const showNotifications = ref(false);
 
 const {

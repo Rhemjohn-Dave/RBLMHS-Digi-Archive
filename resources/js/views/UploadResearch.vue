@@ -48,6 +48,7 @@ import axios from 'axios';
 const router = useRouter();
 const fileInput = ref(null);
 const loading = ref(false);
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024; // 20MB
 const form = reactive({
   title: '',
   authors: '',
@@ -65,16 +66,35 @@ async function submit() {
     errors.file = 'Please select a PDF file.';
     return;
   }
+  if (file.type !== 'application/pdf' && !file.name?.toLowerCase().endsWith('.pdf')) {
+    errors.file = 'Please select a valid PDF file.';
+    return;
+  }
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    errors.file = 'PDF file must be 20MB or smaller.';
+    return;
+  }
   loading.value = true;
   const fd = new FormData();
   fd.append('file', file);
   Object.entries(form).forEach(([k, v]) => { if (v) fd.append(k, v); });
   try {
-    await axios.post('/research', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+    // Let the browser set the correct multipart boundary headers
+    await axios.post('/research', fd);
     router.push('/my-submissions');
   } catch (e) {
-    const d = e.response?.data?.errors || {};
+    const resp = e.response?.data;
+    const d = resp?.errors || {};
     Object.entries(d).forEach(([k, v]) => (errors[k] = Array.isArray(v) ? v[0] : v));
+
+    // When PHP rejects the upload (size limits / partial upload), Laravel returns:
+    // { errors: { file: ["The file failed to upload."] } }
+    if (!errors.file && resp?.message) {
+      errors.file = resp.message;
+    }
+    if (!Object.keys(d).length && !errors.file) {
+      errors.file = 'Upload failed. Please try again.';
+    }
   } finally {
     loading.value = false;
   }
