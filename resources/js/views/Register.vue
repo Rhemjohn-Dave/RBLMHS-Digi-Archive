@@ -1,133 +1,84 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center overflow-y-auto bg-gradient-to-br from-slate-100 to-slate-200 px-4 py-8">
+  <div class="fixed inset-0 flex items-center justify-center overflow-y-auto bg-gradient-to-br from-slate-100 via-white to-slate-100 px-4 py-10">
     <div class="w-full max-w-md">
-      <!-- Logo + branding -->
-      <div class="mb-6 flex flex-col items-center">
+      <div class="mb-8 flex flex-col items-center text-center">
         <img
           v-if="logoSrc"
           :src="logoSrc"
-          alt="Logo"
-          class="h-32 w-auto object-contain"
+          alt="RBLMHS Digi Archive logo"
+          class="h-24 w-auto object-contain"
           @error="logoSrc = ''"
         />
-        <p class="mt-3 text-center text-lg font-semibold text-slate-800">RBLMHS Digi Archive</p>
-        <p class="mt-0.5 text-center text-sm text-slate-500">Create an account</p>
+        <h1 class="mt-4 text-xl font-bold text-slate-900">RBLMHS Digi Archive</h1>
+        <p class="mt-1 text-sm text-slate-500">Create an account</p>
       </div>
 
-      <div class="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 class="text-2xl font-semibold text-slate-800">Register</h1>
-        <p class="mt-1 text-sm text-slate-500">Fill in your details to get started.</p>
-
-        <form @submit.prevent="submit" class="mt-6 space-y-4">
+      <div class="card overflow-hidden">
+        <div class="border-l-4 border-slate-800 bg-slate-50 px-6 py-4">
+          <h2 class="text-lg font-semibold text-slate-800">Register</h2>
+          <p class="mt-0.5 text-sm text-slate-500">Fill in your details to get started.</p>
+        </div>
+        <form @submit.prevent="submit" class="space-y-4 p-6">
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">I am a</label>
-            <select
-              v-model="form.role"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-            >
+            <label class="label-base" for="reg-role">I am a</label>
+            <select id="reg-role" v-model="form.role" class="input-base">
               <option value="student">Student</option>
               <option value="faculty">Faculty</option>
             </select>
           </div>
-
-          <template v-if="form.role === 'student'">
+          <div v-if="form.role === 'student'">
+            <label class="label-base" for="reg-lrn">LRN *</label>
+            <input id="reg-lrn" v-model="form.lrn" type="text" class="input-base" :class="{ 'input-error': errors.lrn }" />
+            <p v-if="errors.lrn" class="mt-1 text-sm text-red-600">{{ errors.lrn }}</p>
+          </div>
+          <div v-else>
+            <label class="label-base" for="reg-faculty_number">Faculty Number *</label>
+            <input id="reg-faculty_number" v-model="form.faculty_number" type="text" class="input-base" :class="{ 'input-error': errors.faculty_number }" />
+            <p v-if="errors.faculty_number" class="mt-1 text-sm text-red-600">{{ errors.faculty_number }}</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label class="mb-1 block text-sm font-medium text-slate-600">LRN *</label>
-              <input
-                v-model="form.lrn"
-                type="text"
-                class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-                :class="errors.lrn ? 'border-red-400 bg-red-50/50' : 'border-slate-300'"
-              />
-              <p v-if="errors.lrn" class="mt-1 text-sm text-red-600">{{ errors.lrn }}</p>
+              <label class="label-base" for="reg-family_name">Family Name *</label>
+              <input id="reg-family_name" v-model="form.family_name" type="text" required class="input-base" :class="{ 'input-error': errors.family_name }" />
+              <p v-if="errors.family_name" class="mt-1 text-sm text-red-600">{{ errors.family_name }}</p>
             </div>
-          </template>
-          <template v-else>
             <div>
-              <label class="mb-1 block text-sm font-medium text-slate-600">Faculty Number *</label>
-              <input
-                v-model="form.faculty_number"
-                type="text"
-                class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-                :class="errors.faculty_number ? 'border-red-400 bg-red-50/50' : 'border-slate-300'"
-              />
-              <p v-if="errors.faculty_number" class="mt-1 text-sm text-red-600">{{ errors.faculty_number }}</p>
+              <label class="label-base" for="reg-given_name">Given Name *</label>
+              <input id="reg-given_name" v-model="form.given_name" type="text" required class="input-base" :class="{ 'input-error': errors.given_name }" />
+              <p v-if="errors.given_name" class="mt-1 text-sm text-red-600">{{ errors.given_name }}</p>
             </div>
-          </template>
-
-          <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">Family Name *</label>
-            <input
-              v-model="form.family_name"
-              type="text"
-              required
-              class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-              :class="errors.family_name ? 'border-red-400 bg-red-50/50' : 'border-slate-300'"
-            />
-            <p v-if="errors.family_name" class="mt-1 text-sm text-red-600">{{ errors.family_name }}</p>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">Given Name *</label>
-            <input
-              v-model="form.given_name"
-              type="text"
-              required
-              class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-              :class="errors.given_name ? 'border-red-400 bg-red-50/50' : 'border-slate-300'"
-            />
-            <p v-if="errors.given_name" class="mt-1 text-sm text-red-600">{{ errors.given_name }}</p>
+            <label class="label-base" for="reg-middle_name">Middle Name</label>
+            <input id="reg-middle_name" v-model="form.middle_name" type="text" class="input-base" />
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">Middle Name</label>
-            <input
-              v-model="form.middle_name"
-              type="text"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-            />
-          </div>
-          <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">Username *</label>
-            <input
-              v-model="form.username"
-              type="text"
-              required
-              class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-              :class="errors.username ? 'border-red-400 bg-red-50/50' : 'border-slate-300'"
-            />
+            <label class="label-base" for="reg-username">Username *</label>
+            <input id="reg-username" v-model="form.username" type="text" required class="input-base" :class="{ 'input-error': errors.username }" />
             <p v-if="errors.username" class="mt-1 text-sm text-red-600">{{ errors.username }}</p>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">Password *</label>
-            <input
-              v-model="form.password"
-              type="password"
-              required
-              class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-              :class="errors.password ? 'border-red-400 bg-red-50/50' : 'border-slate-300'"
-            />
+            <label class="label-base" for="reg-password">Password *</label>
+            <input id="reg-password" v-model="form.password" type="password" required class="input-base" :class="{ 'input-error': errors.password }" />
             <p v-if="errors.password" class="mt-1 text-sm text-red-600">{{ errors.password }}</p>
+            <div v-if="form.password" class="mt-1.5 flex items-center gap-2">
+              <span class="text-xs font-medium" :class="passwordStrengthClass">{{ passwordStrengthLabel }}</span>
+              <span class="text-xs text-slate-400">·</span>
+              <span class="text-xs text-slate-500">At least 8 characters recommended</span>
+            </div>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-slate-600">Confirm Password *</label>
-            <input
-              v-model="form.password_confirmation"
-              type="password"
-              required
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0"
-            />
+            <label class="label-base" for="reg-password_confirmation">Confirm Password *</label>
+            <input id="reg-password_confirmation" v-model="form.password_confirmation" type="password" required class="input-base" />
           </div>
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full rounded-lg bg-slate-800 py-2.5 font-medium text-white hover:bg-slate-700 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {{ loading ? 'Registering...' : 'Register' }}
+          <button type="submit" :disabled="loading" class="btn-primary w-full">
+            <span v-if="loading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true" />
+            {{ loading ? 'Registering…' : 'Register' }}
           </button>
         </form>
-
-        <p class="mt-6 text-center text-sm text-slate-600">
+        <p class="border-t border-slate-100 px-6 py-4 text-center text-sm text-slate-600">
           Already have an account?
-          <router-link to="/login" class="font-medium text-indigo-600 hover:underline">Login</router-link>
+          <router-link to="/login" class="font-medium text-slate-800 underline hover:no-underline">Login</router-link>
         </p>
       </div>
     </div>
@@ -135,14 +86,15 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { setUser } from '../auth';
+import { useToast } from '../composables/useToast';
 
 const router = useRouter();
+const toast = useToast();
 const loading = ref(false);
-// Logo: add a file at public/logo.png to display it (or set another path).
 const logoSrc = ref('/logo.png');
 const form = reactive({
   role: 'student',
@@ -156,6 +108,27 @@ const form = reactive({
   password_confirmation: '',
 });
 const errors = reactive({});
+
+function getPasswordStrength(pwd) {
+  if (!pwd) return { label: '', class: '' };
+  const len = pwd.length;
+  const hasLower = /[a-z]/.test(pwd);
+  const hasUpper = /[A-Z]/.test(pwd);
+  const hasNumber = /\d/.test(pwd);
+  const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
+  let score = 0;
+  if (len >= 8) score += 1;
+  if (len >= 12) score += 1;
+  if (hasLower && hasUpper) score += 1;
+  if (hasNumber) score += 1;
+  if (hasSpecial) score += 1;
+  if (score <= 1) return { label: 'Weak', class: 'text-red-600' };
+  if (score <= 3) return { label: 'Fair', class: 'text-amber-600' };
+  return { label: 'Strong', class: 'text-emerald-600' };
+}
+
+const passwordStrengthLabel = computed(() => getPasswordStrength(form.password).label);
+const passwordStrengthClass = computed(() => getPasswordStrength(form.password).class);
 
 watch(() => form.role, () => {
   Object.keys(errors).forEach((k) => delete errors[k]);
@@ -176,15 +149,17 @@ async function submit() {
     };
     if (form.role === 'student') payload.lrn = form.lrn;
     else payload.faculty_number = form.faculty_number;
-
     const { data } = await axios.post('/register', payload);
     localStorage.setItem('token', data.token);
     setUser(data.user);
+    toast.success('Account created. Welcome!');
     router.push('/');
   } catch (e) {
     const d = e.response?.data?.errors || {};
     Object.entries(d).forEach(([k, v]) => (errors[k] = Array.isArray(v) ? v[0] : v));
     if (Object.keys(errors).length === 0 && e.response?.data?.message) errors.username = e.response.data.message;
+    const errMsg = Object.values(errors).find(Boolean);
+    if (errMsg) toast.error(errMsg);
   } finally {
     loading.value = false;
   }

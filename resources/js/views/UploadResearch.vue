@@ -1,41 +1,73 @@
 <template>
-  <div class="max-w-2xl">
-    <h1 class="mb-6 text-2xl font-semibold text-slate-800">Upload Research</h1>
-    <form @submit.prevent="submit" class="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">Title *</label>
-        <input v-model="form.title" type="text" required class="w-full rounded-lg border border-slate-300 px-3 py-2" />
-        <p v-if="errors.title" class="mt-1 text-sm text-red-600">{{ errors.title }}</p>
+  <div class="max-w-2xl space-y-6">
+    <div>
+      <h1 class="text-2xl font-semibold text-slate-900">Upload Research</h1>
+      <p class="mt-1 text-sm text-slate-500">Submit your research for admin approval.</p>
+    </div>
+
+    <form @submit.prevent="submit" class="space-y-6">
+      <!-- Basic info -->
+      <div class="card overflow-hidden">
+        <div class="card-header border-l-4 border-slate-800 bg-slate-50">Basic information</div>
+        <div class="space-y-4 p-5">
+          <div>
+            <label class="label-base" for="up-title">Title *</label>
+            <input id="up-title" v-model="form.title" type="text" required class="input-base" :class="{ 'input-error': errors.title }" />
+            <p v-if="errors.title" class="mt-1 text-sm text-red-600">{{ errors.title }}</p>
+          </div>
+          <div>
+            <label class="label-base" for="up-authors">Authors *</label>
+            <input id="up-authors" v-model="form.authors" type="text" required class="input-base" :class="{ 'input-error': errors.authors }" />
+            <p v-if="errors.authors" class="mt-1 text-sm text-red-600">{{ errors.authors }}</p>
+          </div>
+          <div>
+            <label class="label-base" for="up-co_authors">Co-authors</label>
+            <input id="up-co_authors" v-model="form.co_authors" type="text" class="input-base" />
+          </div>
+          <div>
+            <label class="label-base" for="up-adviser">Adviser</label>
+            <input id="up-adviser" v-model="form.adviser" type="text" class="input-base" />
+          </div>
+          <div>
+            <label class="label-base" for="up-published_date">Published date</label>
+            <input id="up-published_date" v-model="form.published_date" type="date" class="input-base" />
+          </div>
+        </div>
       </div>
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">Authors *</label>
-        <input v-model="form.authors" type="text" required class="w-full rounded-lg border border-slate-300 px-3 py-2" />
-        <p v-if="errors.authors" class="mt-1 text-sm text-red-600">{{ errors.authors }}</p>
+
+      <!-- Abstract -->
+      <div class="card overflow-hidden">
+        <div class="card-header border-l-4 border-slate-800 bg-slate-50">Abstract</div>
+        <div class="p-5">
+          <label class="label-base" for="up-abstract">Abstract</label>
+          <textarea id="up-abstract" v-model="form.abstract" rows="4" class="input-base resize-y min-h-[100px]"></textarea>
+        </div>
       </div>
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">Co-authors</label>
-        <input v-model="form.co_authors" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+
+      <!-- File -->
+      <div class="card overflow-hidden">
+        <div class="card-header border-l-4 border-slate-800 bg-slate-50">PDF file</div>
+        <div class="p-5">
+          <label class="label-base" for="up-file">PDF file (max 20MB) *</label>
+          <input
+            id="up-file"
+            ref="fileInput"
+            type="file"
+            accept=".pdf"
+            required
+            class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200"
+          />
+          <p v-if="errors.file" class="mt-1 text-sm text-red-600">{{ errors.file }}</p>
+        </div>
       </div>
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">Adviser</label>
-        <input v-model="form.adviser" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
+
+      <div class="flex flex-wrap gap-3">
+        <button type="submit" :disabled="loading" class="btn-primary">
+          <span v-if="loading" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true" />
+          {{ loading ? 'Uploading…' : 'Submit for approval' }}
+        </button>
+        <router-link to="/my-submissions" class="btn-secondary">Cancel</router-link>
       </div>
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">Published Date</label>
-        <input v-model="form.published_date" type="date" class="w-full rounded-lg border border-slate-300 px-3 py-2" />
-      </div>
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">Abstract</label>
-        <textarea v-model="form.abstract" rows="4" class="w-full rounded-lg border border-slate-300 px-3 py-2"></textarea>
-      </div>
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600">PDF File (max 20MB) *</label>
-        <input ref="fileInput" type="file" accept=".pdf" required class="w-full rounded-lg border border-slate-300 px-3 py-2" />
-        <p v-if="errors.file" class="mt-1 text-sm text-red-600">{{ errors.file }}</p>
-      </div>
-      <button type="submit" :disabled="loading" class="rounded-lg bg-slate-800 px-6 py-2.5 font-medium text-white hover:bg-slate-700 disabled:opacity-50">
-        {{ loading ? 'Uploading...' : 'Submit for Approval' }}
-      </button>
     </form>
   </div>
 </template>
@@ -44,11 +76,13 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useToast } from '../composables/useToast';
 
 const router = useRouter();
+const toast = useToast();
 const fileInput = ref(null);
 const loading = ref(false);
-const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024; // 20MB
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
 const form = reactive({
   title: '',
   authors: '',
@@ -79,22 +113,16 @@ async function submit() {
   fd.append('file', file);
   Object.entries(form).forEach(([k, v]) => { if (v) fd.append(k, v); });
   try {
-    // Let the browser set the correct multipart boundary headers
     await axios.post('/research', fd);
+    toast.success('Research submitted for approval.');
     router.push('/my-submissions');
   } catch (e) {
     const resp = e.response?.data;
     const d = resp?.errors || {};
     Object.entries(d).forEach(([k, v]) => (errors[k] = Array.isArray(v) ? v[0] : v));
-
-    // When PHP rejects the upload (size limits / partial upload), Laravel returns:
-    // { errors: { file: ["The file failed to upload."] } }
-    if (!errors.file && resp?.message) {
-      errors.file = resp.message;
-    }
-    if (!Object.keys(d).length && !errors.file) {
-      errors.file = 'Upload failed. Please try again.';
-    }
+    if (!errors.file && resp?.message) errors.file = resp.message;
+    if (!Object.keys(d).length && !errors.file) errors.file = 'Upload failed. Please try again.';
+    toast.error(errors.file || errors.title || 'Upload failed. Please try again.');
   } finally {
     loading.value = false;
   }

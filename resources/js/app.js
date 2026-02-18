@@ -3,6 +3,7 @@ import App from './App.vue';
 import router from './router';
 import axios from 'axios';
 import { initAuth, clearUser } from './auth';
+import { useToast } from './composables/useToast';
 
 initAuth();
 
@@ -27,6 +28,11 @@ axios.interceptors.response.use(
             if (router.currentRoute.value.meta.requiresAuth) {
                 router.push({ name: 'login' });
             }
+        } else if (error.response?.status >= 500 || !error.response) {
+            const toast = useToast();
+            toast.error(error.response?.status >= 500
+                ? 'Something went wrong. Please try again later.'
+                : 'Network error. Please check your connection and try again.');
         }
         return Promise.reject(error);
     }
